@@ -3,7 +3,7 @@ This stack can be used as base to production Camunda 7 Run deployment.
 ## Prerequisites
 - Server with at least 4vCPU and 10GB and *sudo*, *git* installed
 - Docker Swarm started and using rootless mode
-- A configured reverse proxy behind this stack, pointing <CAMUNDA_HOSTNAME> to <CAMUNDA_STACK_INGRES_IP>:8080
+- A configured reverse proxy behind this stack, pointing <CAMUNDA_HOSTNAME> to <CAMUNDA_STACK_INGRESS_IP>:8080
 - An external PostgresSQL (15 tested) database
 - An external on-premise (.local) LDAP directory (Active Directory tested) for authentication and authorization users and groups
 
@@ -53,15 +53,10 @@ git clone <THIS_REPO_URL>.git
 ````
 cd /app/camunda-stack
 ````
-3) Update the values on _camunda-stack.yml_ and _default.yml_ accordingly to your infrastructure.
-4) Create secret to encrypt database password:
+4) Update the values on _camunda-stack.yml_ and _default.yml_ accordingly to your infrastructure.
+5) Create secret to encrypt database password:
 ````
 echo "<CAMUNDA_DB_PASS>" | docker secret create camunda_db_pass -
-````
-5) Adjust directory/file permissions on docker host(s):
-````
-sudo chown -R 1000:1000 /app/camunda-stack; \
-sudo chmod -R 440 /app/camunda-stack; \
 ````
 6) Enable (only) necessary communications on your hosts and network gateways. This stack use port 8080.
 For example, to enable this port on your docker host using firewalld:
@@ -69,12 +64,18 @@ For example, to enable this port on your docker host using firewalld:
 sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent; \
 sudo firewall-cmd --reload
 ````
-7) You can do more things in order to secure your deployment based on your infrastucture resources. Please, see this for more tips. 
->https://docs.camunda.org/manual/latest/user-guide/security/
-8) Run the stack:
+7) Run the stack:
 ````
 docker stack deploy -c camunda-stack.yml camunda
 ````
+8) Adjust directory/file permissions on docker host(s):
+````
+sudo chown -R 1000:1000 /app/camunda-stack; \
+sudo chmod -R 440 /app/camunda-stack
+````
+9) You can do more things in order to secure your deployment based on your infrastucture resources. Please, see this for more tips. 
+>https://docs.camunda.org/manual/latest/user-guide/security/
+
 **Web apps endpoint**
 >https://<CAMUNDA_HOSTNAME>/camunda
 
