@@ -73,7 +73,7 @@ docker stack deploy -c camunda-stack.yml camunda
 sudo chown -R 1000:1000 /app/camunda-stack; \
 sudo chmod -R 440 /app/camunda-stack
 ````
-9) You can do more things in order to secure your deployment based on your infrastucture resources. Please, see this for more tips. 
+9) You can do more things in order to secure your deployment based on your infrastructure resources. Please, see this for more tips. 
 >https://docs.camunda.org/manual/latest/user-guide/security/
 
 **Web apps endpoint**
