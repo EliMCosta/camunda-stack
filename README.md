@@ -1,11 +1,11 @@
 # Camunda Swarm Stack
 This stack can be used as base to production Camunda 7 Run deployment.
 ## Prerequisites
-- Server with at least 4vCPU and 10GB and *sudo* installed
-- Docker Swarm started configured to use rootless mode
+- Server with at least 4vCPU and 10GB and *sudo*, *git* installed
+- Docker Swarm started and using rootless mode
 - A configured reverse proxy behind this stack, pointing <CAMUNDA_HOSTNAME> to <CAMUNDA_STACK_INGRES_IP>:8080
 - An external PostgresSQL (15 tested) database
-- An external on-premise (.local) LDAP directory for authentication and authorization users and groups
+- An external on-premise (.local) LDAP directory (Active Directory tested) for authentication and authorization users and groups
 
 ## Steps to deploy
 ### Database
@@ -47,7 +47,7 @@ cd /app
 ````
 2) Clone this repository
 ````
-git clone <REPO_URL>.git
+git clone <THIS_REPO_URL>.git
 ````
 3) Go to camunda stack folder:
 ````
