@@ -5,7 +5,7 @@ This stack can be used as base to production Camunda 7 Run deployment.
 - Docker Swarm started configured to use rootless mode
 - A configured reverse proxy behind this stack, pointing <CAMUNDA_HOSTNAME> to <CAMUNDA_STACK_INGRES_IP>:8080
 - An external PostgresSQL (15 tested) database
-- An external LDAP directory for authentication and authorization users and groups
+- An external on-premise (.local) LDAP directory for authentication and authorization users and groups
 
 ## Steps to deploy
 ### Database
