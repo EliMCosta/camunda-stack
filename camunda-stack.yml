@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+    - "--providers.docker=true"
+    - "--providers.docker.swarmMode=true"
+    - "--providers.docker.exposedbydefault=false"
+    - "--entrypoints.web.address=:80"
+#    - "--entrypoints.websecure.address=:443"
+    - "--providers.docker.network=traefik_public"
+#Uncomment next line to expose traefik api throught insecure way (don't expose on production)
+      #    - "--api.insecure=true"
+    - "--ping=true"
+#Comment next line if you don't have a reverse proxy behind the stack
+    - "--serversTransport.insecureSkipVerify=true"
+    ports:
+    - "8080:80"
+#    - "443:443"
+#Uncomment next line to expose traefik dashboard throught insecure way (don't expose on production)
+      #    - "8082:8080"
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+    - traefik_public
+    deploy:
+      mode: global
+      placement:
+        constraints:
+        - node.role == manager
+
+  camunda:
+    image: camunda/camunda-bpm-platform:run-7.19.0
+    hostname: camunda
+    secrets:
+      - camunda_db_pass
+    environment:
+      - DB_DRIVER=org.postgresql.Driver
+      - DB_URL=jdbc:postgresql://10.50.61.48:5432/camunda
+      - DB_USERNAME=camunda
+      - DB_PASSWORD_FILE=/run/secrets/camunda_db_pass
+      - SPRING_ACTIVE_PROFILE=production
+      - TZ=America/Sao_Paulo
+      - SKIP_DB_CONFIG=true
+    volumes:
+      - ./conf/default.yml:/camunda/configuration/default.yml
+    networks:
+      - traefik_public
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 2G
+      labels:
+      - traefik.enable=true
+      - traefik.http.services.camunda.loadbalancer.server.port=8080
+      - traefik.http.services.camunda.loadbalancer.sticky=true
+      - traefik.http.services.camunda.loadbalancer.sticky.cookie.name=camunda
+      - traefik.http.routers.camunda.rule=Host(`homol.terracap.df.gov.br`)
+      - traefik.http.routers.camunda.entrypoints=web
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+#docker network create --driver=overlay traefik_public
+networks:
+  traefik_public:
+    external: true
+secrets:
+  camunda_db_pass:
+    external: true
